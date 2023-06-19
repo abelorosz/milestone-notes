@@ -13,14 +13,13 @@ const octokit = github.getOctokit(token);
 const context = github.context;
 
 const owner = core.getInput('owner') || process.env.GITHUB_REPOSITORY_OWNER;
-const repo = core.getInput('repo') || process.env.GITHUB_REPOSITORY_NAME;
-const milestoneNumber = context.payload.milestone.number; // assuming milestone event
+const repo = core.getInput('repo') || context.payload.repository.name;
+const milestoneNumber = context.payload.milestone.number;
 
 const labelMapping = {
   bug: "Bug Fixes",
   enhancement: "New Features",
   feature: "New Features",
-  // Add more mappings here as necessary
 };
 
 const noLabelGroup = 'Closed Issues';
@@ -50,9 +49,10 @@ const query = `
 `;
 
 const generateReleaseNotes = async () => {
+  core.info('Generating release notes...');
+
   if (!owner || !repo || !milestoneNumber || !token) {
-    core.error('Missing required context variables: repo owner, repo name, milestone number or repo token.');
-    core.setFailed('Action failed due to missing input/context variables.');
+    core.setFailed('Missing required context variables: repo owner, repo name, milestone number or repo token.');
     return;
   }
 
@@ -60,8 +60,7 @@ const generateReleaseNotes = async () => {
     const data = await octokit.graphql(query, { owner, repo, milestoneNumber });
 
     if (!data || !data.repository || !data.repository.milestone) {
-      core.error('Invalid response from GitHub API');
-      core.setFailed('Action failed due to invalid API response.');
+      core.setFailed('Invalid response from GitHub API.');
       return;
     }
 
@@ -93,6 +92,8 @@ const generateReleaseNotes = async () => {
       }
     });
 
+    core.info(`Found ${issueGroups.size} labels and ${issues.length} issues.`);
+
     let releaseNotes = '';
 
     // Generate markdown output
@@ -107,11 +108,10 @@ const generateReleaseNotes = async () => {
     }
 
     fs.writeFileSync('RELEASE_NOTES.md', releaseNotes);
-    core.info('Release notes have been successfully generated!');
+    core.info('RELEASE_NOTES.md has been successfully generated!');
 
   } catch (error) {
-    core.error(`Error generating release notes: ${error.message}`);
-    core.setFailed(error.message);
+    core.setFailed(`Error generating release notes: ${error.message}`);
   }
 };
 
