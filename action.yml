@@ -3,7 +3,7 @@ description: 'Generate release notes from milestone'
 inputs:
   token:
     description: 'GitHub token'
-    required: false
+    required: true
   owner:
     description: 'GitHub repository owner'
     required: false
