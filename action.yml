@@ -3,12 +3,15 @@ description: 'Generate release notes from milestone'
 inputs:
   token:
     description: 'GitHub token'
-    required: true
+    required: false
   owner:
     description: 'GitHub repository owner'
     required: false
   repo:
     description: 'GitHub repository name'
+    required: false
+  labelMapping:
+    description: 'Mapping of labels to group names in JSON format'
     required: false
 runs:
   using: 'node16'

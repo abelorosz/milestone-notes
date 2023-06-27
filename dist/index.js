@@ -16,7 +16,8 @@ const owner = core.getInput('owner') || context.payload.repository.owner.login;
 const repo = core.getInput('repo') || context.payload.repository.name;
 const milestoneNumber = context.payload.milestone.number;
 
-const labelMapping = {
+// Get labelMapping from input, parse it as JSON, or use default mapping if input is not provided
+const labelMapping = JSON.parse(core.getInput('labelMapping')) || {
   bug: "Bug Fixes",
   enhancement: "New Features",
   feature: "New Features",
