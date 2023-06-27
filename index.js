@@ -2,9 +2,9 @@ const core = require('@actions/core');
 const github = require('@actions/github');
 const fs = require('fs');
 
-const token = core.getInput('token') || github.token;
-const octokit = github.getOctokit(token);
 const context = github.context;
+const token = core.getInput('token') || context.token;
+const octokit = github.getOctokit(token);
 
 const owner = core.getInput('owner') || context.payload.repository.owner.login;
 const repo = core.getInput('repo') || context.payload.repository.name;
