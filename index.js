@@ -2,11 +2,11 @@ const core = require('@actions/core');
 const github = require('@actions/github');
 const fs = require('fs');
 
-const token = core.getInput('token', { required: true });
+const token = core.getInput('token') || github.token;
 const octokit = github.getOctokit(token);
 const context = github.context;
 
-const owner = core.getInput('owner') || process.env.GITHUB_REPOSITORY_OWNER;
+const owner = core.getInput('owner') || context.payload.repository.owner.login;
 const repo = core.getInput('repo') || context.payload.repository.name;
 const milestoneNumber = context.payload.milestone.number;
 
