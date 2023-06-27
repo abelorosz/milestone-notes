@@ -9,6 +9,13 @@ const github = __nccwpck_require__(5438);
 const fs = __nccwpck_require__(7147);
 
 const token = core.getInput('token');
+
+// Check if token is provided
+if (!token) {
+  core.setFailed('Missing required input: token.');
+  return;
+}
+
 const octokit = github.getOctokit(token);
 const context = github.context;
 
