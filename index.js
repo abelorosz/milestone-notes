@@ -21,7 +21,7 @@ const milestoneNumber = context.payload.milestone.number;
 const labelMapping = JSON.parse(core.getInput('labelMapping')) || {
   bug: "Bug Fixes",
   enhancement: "New Features",
-  feature: "New Features",
+  documentation: "Documentation",
 };
 
 const noLabelGroup = 'Closed Issues';
@@ -79,18 +79,17 @@ const generateReleaseNotes = async () => {
         issueGroups.get(noLabelGroup).push(issue);
       } else {
         // Handle issues with labels
-        issue.labels.nodes.forEach((label) => {
-          const mappedLabel = labelMapping[label.name] || label.name;
+        const label = issue.labels.nodes[0];
+        const mappedLabel = labelMapping[label.name] || label.name;
 
-          if (!issueGroups.has(mappedLabel)) {
-            issueGroups.set(mappedLabel, []);
-          }
+        if (!issueGroups.has(mappedLabel)) {
+          issueGroups.set(mappedLabel, []);
+        }
 
-          const alreadyAdded = issueGroups.get(mappedLabel).some(groupedIssue => groupedIssue.number === issue.number);
-          if (!alreadyAdded) {
-            issueGroups.get(mappedLabel).push(issue);
-          }
-        });
+        const alreadyAdded = issueGroups.get(mappedLabel).some(groupedIssue => groupedIssue.number === issue.number);
+        if (!alreadyAdded) {
+          issueGroups.get(mappedLabel).push(issue);
+        }
       }
     });
 
