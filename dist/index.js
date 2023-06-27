@@ -24,11 +24,25 @@ const repo = core.getInput('repo') || context.payload.repository.name;
 const milestoneNumber = context.payload.milestone.number;
 
 // Get labelMapping from input, parse it as JSON, or use default mapping if input is not provided
-const labelMapping = JSON.parse(core.getInput('labelMapping')) || {
-  bug: "Bug Fixes",
-  enhancement: "New Features",
-  documentation: "Documentation",
-};
+let labelMapping = {};
+
+try {
+  const input = core.getInput('labelMapping');
+  if (input) {
+    labelMapping = JSON.parse(input);
+  }
+} catch (error) {
+  console.error(error);
+  // handle the error
+}
+
+if (Object.keys(labelMapping).length === 0) {
+  labelMapping = {
+    bug: "Bug Fixes",
+    enhancement: "New Features",
+    documentation: "Documentation",
+  };
+}
 
 const noLabelGroup = 'Closed Issues';
 
